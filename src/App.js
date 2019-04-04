@@ -1,6 +1,6 @@
 import React, {Component} from 'react';
-import {Router} from '@reach/router';
-//import firebase from './components/config/Firebase';
+import {Router, navigate} from '@reach/router';
+import firebase from './components/config/Firebase';
 
 import 'bootstrap/dist/css/bootstrap.css';
 
@@ -15,29 +15,62 @@ class App extends Component {
     constructor() {
         super();
         this.state = {
-            user: null
+            user: null,
+            displayName: null,
+            userId: null
         }
     }
-/*    componentDidMount() {
-        const ref = firebase.database().ref('user');
-        ref.on('value',snapshot=>{
-            let FBUser = snapshot.val();
-            this.setState({user:FBUser});
+
+    componentDidMount() {
+        firebase.auth().onAuthStateChanged(FBUser => {
+            if (FBUser) {
+                this.setState({
+                    user: FBUser,
+                    displayName: FBUser.displayName,
+                    userId: FBUser.uid
+                })
+            }
         })
-    }*/
+    }
+
+    registerUser = userName => {
+        firebase.auth().onAuthStateChanged(FBUser => {
+            FBUser.updateProfile({
+                displayName: userName
+            }).then(() => {
+                this.setState({
+                    user: FBUser,
+                    displayName: FBUser.displayName,
+                    userId: FBUser.uid
+                });
+                navigate('/meetings')
+            });
+        });
+    };
+    logoutUser = e => {
+        e.preventDefault();
+        this.setState({
+            displayName: null,
+            user: null,
+            userId: null
+        });
+        firebase.auth().signOut().then(() => {
+            navigate('/login');
+        });
+    };
 
     render() {
         return (
             <div>
-                <NavBar user={this.state.user}/>
+                <NavBar user={this.state.user} logoutUser={this.logoutUser}/>
                 {this.state.user &&
-                <Welcome user={this.state.user}/>
+                <Welcome userName={this.state.displayName} logoutUser ={this.logoutUser}/>
                 }
                 <Router>
                     <Home path="/" user={this.state.user}/>
                     <Login path="/login"/>
                     <Meeting path="/meetings"/>
-                    <Register path="/register"/>
+                    <Register path="/register" registerUser={this.registerUser}/>
                 </Router>
 
 
