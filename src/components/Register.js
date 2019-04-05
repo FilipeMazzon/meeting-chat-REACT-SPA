@@ -20,7 +20,7 @@ class Register extends Component {
         const itemName = e.target.name;
         const itemValue = e.target.value;
         this.setState({[itemName]: itemValue}, () => {
-            if (this.state.password !== this.state.passTwo) {
+            if (this.state.passOne !== this.state.passTwo) {
                 this.setState({errorMessage: 'password no not match'})
             } else {
                 this.setState({errorMessage: null})
@@ -32,7 +32,7 @@ class Register extends Component {
         const registrationInfo = {
             displayName: this.state.displayName,
             email: this.state.email,
-            password: this.state.password
+            password: this.state.passOne
         };
         e.preventDefault();
         firebase.auth().createUserWithEmailAndPassword(

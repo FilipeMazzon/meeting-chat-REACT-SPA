@@ -34,7 +34,9 @@ class App extends Component {
     }
 
     registerUser = userName => {
-        firebase.auth().onAuthStateChanged(FBUser => {
+        firebase
+            .auth()
+            .onAuthStateChanged(FBUser => {
             FBUser.updateProfile({
                 displayName: userName
             }).then(() => {
